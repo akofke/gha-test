@@ -41,6 +41,7 @@ jobs:
     - name: Print
       run: echo ${{ steps.get_date.outputs.date }}
     - name: Create release
+      id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -48,3 +49,12 @@ jobs:
         tag_name: nightly-${{ steps.get_sha.outputs.sha }}-${{ steps.get_date.outputs.date }}
         release_name: Release ${{ steps.get_date.outputs.date }}-${{ steps.get_sha.outputs.sha }}
         draft: false
+    - name: Upload release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./README.md
+          asset_name: asset-${{ runner.os }}
+          asset_content_type: application/octet-stream
