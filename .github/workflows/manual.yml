@@ -30,6 +30,14 @@ jobs:
       run: echo "Hello ${{ github.event.inputs.name }}"
     - name: Get current date
       id: get_date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      run: echo "::set-output name=date::$(date +'%Y-%m-%dT%H:%M:%S')"
     - name: Print
       run: echo ${{ steps.get_date.outputs.date }}
+    - name: Create release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: nightly
+        release_name: Release ${{ steps.get_date.outputs.date }}
+        draft: false
