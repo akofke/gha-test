@@ -33,7 +33,9 @@ jobs:
       run: | 
         echo "::set-output name=date::$(date +'%Y-%m-%d')"
         echo "::set-output name=datetime::$(date +'%Y-%m-%dT%H:%M:%S')"
-
+    - name: Get short sha
+      id: get_sha
+      run: echo "::set-output name=sha::$(git rev-parse --short ${{ github.sha }})"
     - name: Print
       run: echo ${{ steps.get_date.outputs.date }}
     - name: Create release
@@ -41,6 +43,6 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: nightly-${{ github.sha }}-${{ steps.get_date.outputs.date }}
-        release_name: Release ${{ steps.get_date.outputs.datetime }}
+        tag_name: nightly-${{ steps.get_sha.outputs.sha }}-${{ steps.get_date.outputs.date }}
+        release_name: Release ${{ steps.get_date.outputs.date }}-${{ steps.get_sha.outputs.sha }}
         draft: false
